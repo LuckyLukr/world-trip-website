@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #2F5D5A;
+  --color-accent: #4B86C7;
+  --color-surface: #F6F1E6;
+  --color-text: #1B2327;
+  --color-bg: #FBF8F1;
+  --color-muted: #5B6B6F;
+  --color-bg-alt: color-mix(in srgb, #2F5D5A 6%, #FBF8F1);
+  --color-surface-tint: color-mix(in srgb, #4B86C7 10%, #F6F1E6);
+  --color-surface-strong: color-mix(in srgb, #2F5D5A 14%, #F6F1E6);
+  --color-card: color-mix(in srgb, #2F5D5A 7%, #F6F1E6);
+  --color-card-strong: color-mix(in srgb, #4B86C7 12%, #F6F1E6);
+  --color-line: color-mix(in srgb, #1B2327 10%, transparent);
+  --color-line-strong: color-mix(in srgb, #2F5D5A 22%, transparent);
+  --color-nav: color-mix(in srgb, #1B2327 4%, white);
+  --color-nav-border: color-mix(in srgb, #2F5D5A 12%, transparent);
+  --color-image-placeholder: color-mix(in srgb, #4B86C7 9%, #F6F1E6);
+  --font-heading: 'Playfair Display', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* ─── Background systems ─── */
+.jean-bg-mesh {
+  background-image:
+    radial-gradient(at 0% 0%, rgba(47,93,90,0.25) 0%, transparent 55%),
+    radial-gradient(at 100% 0%, rgba(75,134,199,0.22) 0%, transparent 55%),
+    radial-gradient(at 50% 100%, rgba(47,93,90,0.25) 0%, transparent 50%),
+    radial-gradient(at 85% 70%, rgba(75,134,199,0.22) 0%, transparent 45%);
+}
+
+.jean-bg-grid {
+  background-image: radial-gradient(circle, rgba(91,107,111,0.12) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+.jean-bg-spotlight {
+  background-image: radial-gradient(ellipse 90% 60% at 50% 0%, rgba(47,93,90,0.22) 0%, transparent 75%);
+}
+
+/* ─── Card surface styles ─── */
+/* Hero/section-level glass (full blur, applied on hero/cta sections) */
+.jean-glass {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.80);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+/* Card-level glass (reduced blur for dense grids — lower composite cost) */
+.jean-glass-card {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.75);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.jean-elevated {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 10px 15px -3px rgba(0,0,0,0.10);
+}
+
+.jean-soft-shadow {
+  background: var(--color-card-strong);
+  border: 1px solid var(--color-line-strong);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.jean-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+}
+
+.jean-card-strong {
+  background: var(--color-card-strong);
+  border: 1px solid var(--color-line-strong);
+}
+
+/* ─── Card behaviors ─── */
+.jean-float {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.jean-float:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.14);
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .jean-float {
+    transition: none;
+  }
+  .jean-float:hover {
+    transform: none;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.jean-scroll-stage {
+  position: relative;
+  --jean-scroll-progress: 0;
+}
+
+.jean-motion-layer {
+  --jean-parallax-offset: 0px;
+  opacity: 0;
+  transform: translate3d(0, calc(28px + var(--jean-parallax-offset)), 0) scale(0.985);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.jean-motion-layer.is-visible {
+  opacity: 1;
+  transform: translate3d(0, var(--jean-parallax-offset), 0) scale(1);
+}
+
+.jean-parallax-up {
+  --jean-parallax-offset: 0px;
+}
+
+.jean-parallax-down {
+  --jean-parallax-offset: 0px;
+}
+
+.jean-parallax-subtle {
+  --jean-parallax-offset: calc(var(--jean-scroll-progress, 0) * -6px);
+}
+
+.jean-panel-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.jean-section-shell {
+  position: relative;
+}
+
+.jean-rhythm-wide {
+  width: min(96rem, calc(100vw - 1.5rem));
+}
+
+.jean-rhythm-tight {
+  width: min(72rem, calc(100vw - 1.5rem));
+}
+
+.jean-gallery-columns,
+.jean-stagger-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.jean-stagger-card {
+  transition-delay: var(--jean-stagger-delay, 0s);
+}
+
+.jean-pullquote-card {
+  position: relative;
+}
+
+.jean-pullquote-card::before {
+  content: '"';
+  position: absolute;
+  top: 0.35rem;
+  left: 1rem;
+  font-family: var(--font-heading);
+  font-size: clamp(4rem, 7vw, 6rem);
+  line-height: 0.8;
+  color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  pointer-events: none;
+}
+
+.jean-grid-pattern-row {
+  width: 100%;
+}
+
+.jean-hero-shell {
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  .jean-hero-stage {
+    min-height: 150vh;
+  }
+
+  .jean-hero-shell {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .jean-panel-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .jean-gallery-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .jean-gallery-columns .jean-gallery-card--featured {
+    grid-row: span 2;
+  }
+
+  .jean-grid-pattern-row[data-row-centered='true'] {
+    max-width: calc(100% * var(--jean-row-share, 1));
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .jean-panel-sticky {
+    position: sticky;
+    top: clamp(5rem, 10vh, 7.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .jean-motion-layer {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .jean-parallax-up,
+  .jean-parallax-down,
+  .jean-parallax-subtle {
+    --jean-parallax-offset: 0px;
+  }
+
+  .jean-hero-stage {
+    min-height: auto;
+  }
+
+  .jean-hero-shell,
+  .jean-panel-sticky {
+    position: static;
+    min-height: auto;
+  }
+
+  .jean-pullquote-card::before {
+    display: none;
+  }
+
+  .jean-float {
+    transition: none;
+  }
+
+  .jean-float:hover {
+    transform: none;
+  }
+}
