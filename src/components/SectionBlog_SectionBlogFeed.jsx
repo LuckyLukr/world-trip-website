@@ -55,7 +55,7 @@ export function SectionBlog_SectionBlogFeed() {
         {status === 'ready' && posts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <article key={post.id} className="jean-elevated rounded-3xl overflow-hidden flex flex-col">
+              <article key={post.id} className="jean-card rounded-3xl overflow-hidden flex flex-col">
                 {post.imageUrl && (
                   <img src={post.imageUrl} alt="" className="w-full h-48 object-cover" loading="lazy" />
                 )}

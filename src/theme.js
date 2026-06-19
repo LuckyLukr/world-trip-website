@@ -7,19 +7,19 @@ export const theme = {
   "palette": {
     "bg": "#FBF8F1",
     "text": "#1B2327",
-    "muted": "#5B6B6F",
+    "muted": "#516065",
     "accent": "#4B86C7",
     "primary": "#2F5D5A",
-    "surface": "#F6F1E6"
+    "surface": "#FFFDF8"
   },
   "spacing": "comfortable",
   "borderRadius": "xl",
   "cardBehavior": "floating",
-  "layoutEnergy": "playful",
-  "surfaceStyle": "elevated",
-  "heroComposition": "split",
+  "layoutEnergy": "editorial",
+  "surfaceStyle": "solid",
+  "heroComposition": "asymmetrical",
   "backgroundSystem": "abstract_shapes",
-  "decorationDensity": "moderate"
+  "decorationDensity": "minimal"
 };
 
 export const palette = theme.palette;

@@ -69,13 +69,13 @@ export function SectionContact_SectionContactFormContact() {
             
           </div>
           {status === 'success' ? (
-            <div className="jean-elevated p-6 rounded-3xl flex flex-col items-center gap-5 text-center">
+            <div className="jean-card-strong p-6 rounded-3xl flex flex-col items-center gap-5 text-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--color-primary)' }}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <h3 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>{JEAN_COPY.successHeading}</h3>
               <p style={{ color: 'var(--color-muted)' }}>{JEAN_COPY.successBody}</p>
             </div>
           ) : (
-            <form className="jean-elevated p-6 rounded-3xl flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+            <form className="jean-card-strong p-6 rounded-3xl flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
               <input ref={_hpRef} type="text" name="_hp" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" aria-hidden="true" />
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{JEAN_COPY.labelName}</label>

@@ -3,20 +3,20 @@
 :root {
   --color-primary: #2F5D5A;
   --color-accent: #4B86C7;
-  --color-surface: #F6F1E6;
+  --color-surface: #FFFDF8;
   --color-text: #1B2327;
   --color-bg: #FBF8F1;
-  --color-muted: #5B6B6F;
+  --color-muted: #516065;
   --color-bg-alt: color-mix(in srgb, #2F5D5A 6%, #FBF8F1);
-  --color-surface-tint: color-mix(in srgb, #4B86C7 10%, #F6F1E6);
-  --color-surface-strong: color-mix(in srgb, #2F5D5A 14%, #F6F1E6);
-  --color-card: color-mix(in srgb, #2F5D5A 7%, #F6F1E6);
-  --color-card-strong: color-mix(in srgb, #4B86C7 12%, #F6F1E6);
+  --color-surface-tint: color-mix(in srgb, #4B86C7 10%, #FFFDF8);
+  --color-surface-strong: color-mix(in srgb, #2F5D5A 14%, #FFFDF8);
+  --color-card: color-mix(in srgb, #2F5D5A 7%, #FFFDF8);
+  --color-card-strong: color-mix(in srgb, #4B86C7 12%, #FFFDF8);
   --color-line: color-mix(in srgb, #1B2327 10%, transparent);
   --color-line-strong: color-mix(in srgb, #2F5D5A 22%, transparent);
   --color-nav: color-mix(in srgb, #1B2327 4%, white);
   --color-nav-border: color-mix(in srgb, #2F5D5A 12%, transparent);
-  --color-image-placeholder: color-mix(in srgb, #4B86C7 9%, #F6F1E6);
+  --color-image-placeholder: color-mix(in srgb, #4B86C7 9%, #FFFDF8);
   --font-heading: 'Playfair Display', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
 }
@@ -43,7 +43,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .jean-bg-grid {
-  background-image: radial-gradient(circle, rgba(91,107,111,0.12) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(circle, rgba(81,96,101,0.12) 1.5px, transparent 1.5px);
   background-size: 24px 24px;
 }
 

@@ -3,7 +3,7 @@ import React from 'react';
 export function SectionFooter_SectionFooterSimple() {
 
   return (
-    <footer className="py-10 mt-auto" style={{ backgroundColor: '#F6F1E6' }} id="section_footer_simple" data-section-id="section_footer_simple" data-section-type="footer">
+    <footer className="py-10 mt-auto" style={{ backgroundColor: '#FFFDF8' }} id="section_footer_simple" data-section-id="section_footer_simple" data-section-type="footer">
       <div className="max-w-7xl mx-auto px-6 flex flex-col gap-6">
         
         <div className="text-center max-w-3xl mx-auto flex flex-col gap-3"><div dangerouslySetInnerHTML={{ __html: "<p data-block-id=\"block_footer_brand\" data-block-type=\"text.paragraph\" style=\"color:var(--color-text);line-height:1.6;font-weight:400\">© Cesta kolem světa — deník Kláry z Valtic. Klára je AI persona powered by JeanAI.cz. Všechny drafty procházejí lidským schválením před publikací.</p>" }} /></div>
