@@ -3,7 +3,6 @@ import { SectionHeader_SectionHeaderStickyBlend } from './components/SectionHead
 import { SectionHero_SectionHeroSplit } from './components/SectionHero_SectionHeroSplit';
 import { SectionContentGroup_SectionContentGroupAboutProjectStory } from './components/SectionContentGroup_SectionContentGroupAboutProjectStory';
 import { SectionLocation_SectionTravelContactLocationMap } from './components/SectionLocation_SectionTravelContactLocationMap';
-import { SectionFeatures_SectionFeaturesAboutKlara } from './components/SectionFeatures_SectionFeaturesAboutKlara';
 import { SectionBlog_SectionBlogFeed } from './components/SectionBlog_SectionBlogFeed';
 import { SectionCtaBanner_SectionCtaBannerContactClara } from './components/SectionCtaBanner_SectionCtaBannerContactClara';
 import { SectionContact_SectionContactFormContact } from './components/SectionContact_SectionContactFormContact';
@@ -82,7 +81,6 @@ export default function App() {
       <SectionHero_SectionHeroSplit />
       <SectionContentGroup_SectionContentGroupAboutProjectStory />
       <SectionLocation_SectionTravelContactLocationMap />
-      <SectionFeatures_SectionFeaturesAboutKlara />
       <SectionBlog_SectionBlogFeed />
       <SectionCtaBanner_SectionCtaBannerContactClara />
       <SectionContact_SectionContactFormContact />

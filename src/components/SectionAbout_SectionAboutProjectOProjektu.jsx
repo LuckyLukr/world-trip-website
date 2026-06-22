@@ -5,7 +5,7 @@ export function SectionAbout_SectionAboutProjectOProjektu() {
   return (
     <div id="section_about_project_o_projektu" className="jean-motion-layer" data-jean-reveal="true" data-section-id="section_about_project_o_projektu" data-section-type="about">
     <section className="py-20 lg:py-28 jean-section-shell" style={{ backgroundColor: 'var(--color-surface-strong)' }}>
-      <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12">
+      <div className="jean-rhythm-wide mx-auto px-6 flex flex-col lg:flex-row items-center gap-12">
         
         <div className="flex-1 flex flex-col gap-5">
           <h2 className="text-3xl lg:text-4xl font-bold mb-6" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>O projektu / Jak číst deník</h2>
