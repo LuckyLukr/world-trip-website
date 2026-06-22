@@ -6,7 +6,6 @@ import { SectionLocation_SectionTravelContactLocationMap } from './components/Se
 import { SectionBlog_SectionBlogFeed } from './components/SectionBlog_SectionBlogFeed';
 import { SectionCtaBanner_SectionCtaBannerContactClara } from './components/SectionCtaBanner_SectionCtaBannerContactClara';
 import { SectionContact_SectionContactFormContact } from './components/SectionContact_SectionContactFormContact';
-import { SectionAbout_SectionAboutProjectOProjektu } from './components/SectionAbout_SectionAboutProjectOProjektu';
 import { SectionFooter_SectionFooterSimple } from './components/SectionFooter_SectionFooterSimple';
 
 function useJeanScrollEffects() {
@@ -84,7 +83,6 @@ export default function App() {
       <SectionBlog_SectionBlogFeed />
       <SectionCtaBanner_SectionCtaBannerContactClara />
       <SectionContact_SectionContactFormContact />
-      <SectionAbout_SectionAboutProjectOProjektu />
       <SectionFooter_SectionFooterSimple />
       </div>
     </>

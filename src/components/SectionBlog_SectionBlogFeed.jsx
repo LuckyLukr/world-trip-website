@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const JEAN_SITE_ID = "2efb59e7-f59f-4c02-8d6b-f6a904882944";
 const JEAN_API_URL = "https://jeanai.onrender.com";
+const JEAN_PREVIEW = false;
 
 const JEAN_COPY = {
   loading: 'Načítám příspěvky…',
@@ -25,6 +27,41 @@ function formatBlogDate(iso) {
 
 const PREVIEW_LEN = 140;
 
+// Inline SVG placeholder (no network) used for sample posts in the editor preview.
+function jeanSamplePlaceholder(from, to) {
+  const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'>"
+    + "<defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>"
+    + "<stop offset='0' stop-color='" + from + "'/><stop offset='1' stop-color='" + to + "'/>"
+    + "</linearGradient></defs><rect width='600' height='600' fill='url(#g)'/></svg>";
+  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
+// Representative posts shown only in the editor preview (JEAN_PREVIEW). A deployed
+// site never shows these — it renders live posts (or the real empty state).
+const JEAN_SAMPLE_POSTS = [
+  {
+    id: 'sample-1', slug: 'ukazkovy-prispevek-1', title: 'Ukázkový příspěvek',
+    body: 'Takto bude vypadat příspěvek, který tvůj AI tvůrce zveřejní. Skutečné příspěvky se sem doplní automaticky po publikaci. Obrázek, nadpis, text i hashtagy se generují podle zadání a osobnosti tvůrce.',
+    imageUrl: jeanSamplePlaceholder('#6366f1', '#8b5cf6'),
+    hashtags: ['ukazka', 'nahled', 'jeanai'], disclosure: '✨ Ukázkový obsah — náhled v editoru.',
+    publishedAt: new Date().toISOString(),
+  },
+  {
+    id: 'sample-2', slug: 'ukazkovy-prispevek-2', title: 'Druhý ukázkový příspěvek',
+    body: 'Karty jsou ve stylu Instagramu: čtvercový obrázek, krátký úryvek a odkaz „více“, který otevře celý příspěvek. Po nasazení webu se zde objeví reálné příspěvky.',
+    imageUrl: jeanSamplePlaceholder('#0ea5e9', '#22d3ee'),
+    hashtags: ['ukazka', 'design'], disclosure: '✨ Ukázkový obsah — náhled v editoru.',
+    publishedAt: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 'sample-3', slug: 'ukazkovy-prispevek-3', title: 'Třetí ukázkový příspěvek',
+    body: 'Kliknutím na obrázek nebo na „více“ se otevře detail příspěvku s celým textem a hashtagy. Detail má vlastní adresu (#/post/…), takže se dá sdílet.',
+    imageUrl: jeanSamplePlaceholder('#f59e0b', '#ef4444'),
+    hashtags: ['ukazka', 'detail', 'sdileni'], disclosure: '✨ Ukázkový obsah — náhled v editoru.',
+    publishedAt: new Date(Date.now() - 172800000).toISOString(),
+  },
+];
+
 // Hash routing: #/post/<slug> deep-links a single post (shareable, deep-linkable,
 // works on any static host with no server rewrite). Returns the slug or null.
 function slugFromHash() {
@@ -44,6 +81,8 @@ export function SectionBlog_SectionBlogFeed() {
   // page) is fetched on demand from the single-post endpoint.
   const [fetchedPost, setFetchedPost] = useState(null);
   const [detailStatus, setDetailStatus] = useState('idle'); // idle|loading|ready|notfound|error
+  // Second-level zoom: tapping the detail image shows it full-screen.
+  const [imageZoomed, setImageZoomed] = useState(false);
 
   const activeIdx = activeSlug ? posts.findIndex((p) => p.slug === activeSlug) : -1;
   const activePost = activeSlug ? (activeIdx >= 0 ? posts[activeIdx] : fetchedPost) : null;
@@ -65,8 +104,10 @@ export function SectionBlog_SectionBlogFeed() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  // Load the feed (latest posts) once.
+  // Load the feed (latest posts) once. In the editor preview the runtime fetch is
+  // sandbox-blocked, so show sample posts instead.
   useEffect(() => {
+    if (JEAN_PREVIEW) { setPosts(JEAN_SAMPLE_POSTS); setStatus('ready'); return undefined; }
     let cancelled = false;
     (async () => {
       try {
@@ -86,7 +127,7 @@ export function SectionBlog_SectionBlogFeed() {
   // Deep link to a post that isn't in the loaded feed → fetch it by slug. Wait
   // for the feed to settle first so in-feed posts skip the extra request.
   useEffect(() => {
-    if (!activeSlug || activeIdx >= 0 || status === 'loading') {
+    if (JEAN_PREVIEW || !activeSlug || activeIdx >= 0 || status === 'loading') {
       setDetailStatus('idle');
       setFetchedPost(null);
       return undefined;
@@ -109,13 +150,14 @@ export function SectionBlog_SectionBlogFeed() {
     return () => { cancelled = true; };
   }, [activeSlug, activeIdx, status]);
 
-  // Escape closes, arrows navigate within the loaded feed, scroll locked while open.
+  // Escape closes (zoom first, then the post), arrows navigate the loaded feed,
+  // background scroll locked while open.
   useEffect(() => {
     if (!activeSlug) return undefined;
     const onKey = (e) => {
-      if (e.key === 'Escape') closeDetail();
-      else if (canNavigate && e.key === 'ArrowLeft') goToPost(posts[activeIdx <= 0 ? posts.length - 1 : activeIdx - 1].slug);
-      else if (canNavigate && e.key === 'ArrowRight') goToPost(posts[activeIdx >= posts.length - 1 ? 0 : activeIdx + 1].slug);
+      if (e.key === 'Escape') { if (imageZoomed) setImageZoomed(false); else closeDetail(); }
+      else if (!imageZoomed && canNavigate && e.key === 'ArrowLeft') goToPost(posts[activeIdx <= 0 ? posts.length - 1 : activeIdx - 1].slug);
+      else if (!imageZoomed && canNavigate && e.key === 'ArrowRight') goToPost(posts[activeIdx >= posts.length - 1 ? 0 : activeIdx + 1].slug);
     };
     window.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
@@ -124,7 +166,10 @@ export function SectionBlog_SectionBlogFeed() {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [activeSlug, activeIdx, canNavigate, posts]);
+  }, [activeSlug, activeIdx, canNavigate, posts, imageZoomed]);
+
+  // Reset the image zoom whenever the open post changes or the detail closes.
+  useEffect(() => { setImageZoomed(false); }, [activeSlug]);
 
   // Reflect the open post in the tab/title so shared deep-links read well.
   useEffect(() => {
@@ -204,101 +249,133 @@ export function SectionBlog_SectionBlogFeed() {
         )}
       </div>
     </section>
-    {activeSlug && (
-      <div
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
-        style={{ backgroundColor: 'rgba(0,0,0,0.92)' }}
-        onClick={closeDetail}
-        role="dialog"
-        aria-modal="true"
-      >
-        {activePost ? (
-          <div
-            className="relative flex flex-col md:flex-row w-full max-w-5xl rounded-2xl overflow-hidden"
-            style={{ background: 'var(--color-surface, #ffffff)', maxHeight: '88vh', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {activePost.imageUrl && (
-              <div className="md:w-3/5 flex items-center justify-center shrink-0" style={{ background: '#000' }}>
-                <img
-                  src={activePost.imageUrl}
-                  alt={activePost.title || ''}
-                  className="w-full object-contain max-h-[45vh] md:max-h-[88vh]"
-                />
+    {activeSlug && typeof document !== 'undefined' && createPortal(
+      <>
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+          style={{ backgroundColor: 'rgba(0,0,0,0.92)' }}
+          onClick={closeDetail}
+          role="dialog"
+          aria-modal="true"
+        >
+          {activePost ? (
+            <div
+              className="relative flex flex-col md:flex-row w-full max-w-5xl rounded-2xl overflow-hidden"
+              style={{ background: 'var(--color-surface, #ffffff)', height: '88vh', maxHeight: '820px', boxShadow: '0 25px 60px rgba(0,0,0,0.5)' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {activePost.imageUrl && (
+                <button
+                  type="button"
+                  className="md:w-3/5 shrink-0 flex items-center justify-center overflow-hidden"
+                  style={{ background: '#000', border: 'none', padding: 0, cursor: 'zoom-in' }}
+                  onClick={() => setImageZoomed(true)}
+                  aria-label={JEAN_COPY.viewPost}
+                >
+                  <img
+                    src={activePost.imageUrl}
+                    alt={activePost.title || ''}
+                    className="w-auto max-w-full max-h-[42vh] md:max-h-full object-contain"
+                  />
+                </button>
+              )}
+              <div className={'flex flex-col p-6 overflow-y-auto min-h-0 ' + (activePost.imageUrl ? 'md:w-2/5' : 'w-full')}>
+                <a
+                  href="#/"
+                  className="inline-flex items-center gap-1 text-xs font-medium mb-3 self-start"
+                  style={{ color: 'var(--color-muted)', textDecoration: 'none' }}
+                >
+                  &#8592; {JEAN_COPY.back}
+                </a>
+                {activePost.publishedAt && (
+                  <span className="text-xs mb-2" style={{ color: 'var(--color-muted)' }}>{formatBlogDate(activePost.publishedAt)}</span>
+                )}
+                {activePost.title && (
+                  <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>{activePost.title}</h3>
+                )}
+                <p className="text-sm flex-1" style={{ color: 'var(--color-text)', whiteSpace: 'pre-wrap', lineHeight: 1.65 }}>{activePost.body}</p>
+                {Array.isArray(activePost.hashtags) && activePost.hashtags.length > 0 && (
+                  <div className="text-xs font-medium mt-4" style={{ color: 'var(--color-primary)', lineHeight: 1.6 }}>
+                    {activePost.hashtags.map((h) => '#' + h).join(' ')}
+                  </div>
+                )}
+                {activePost.disclosure && (
+                  <p className="text-xs mt-4 pt-3 border-t" style={{ color: 'var(--color-muted)', borderColor: 'var(--color-line)' }}>{activePost.disclosure}</p>
+                )}
+                {canNavigate && (
+                  <div className="flex items-center justify-between mt-5 pt-4 border-t" style={{ borderColor: 'var(--color-line)' }}>
+                    <button
+                      type="button"
+                      className="text-xl px-3 py-1 rounded-full"
+                      style={{ background: 'var(--color-surface-2, rgba(0,0,0,0.05))', color: 'var(--color-text)', border: 'none', cursor: 'pointer' }}
+                      onClick={() => goToPost(posts[activeIdx <= 0 ? posts.length - 1 : activeIdx - 1].slug)}
+                      aria-label={JEAN_COPY.prevPost}
+                    >
+                      &#8592;
+                    </button>
+                    <span className="text-xs" style={{ color: 'var(--color-muted)' }}>{activeIdx + 1} / {posts.length}</span>
+                    <button
+                      type="button"
+                      className="text-xl px-3 py-1 rounded-full"
+                      style={{ background: 'var(--color-surface-2, rgba(0,0,0,0.05))', color: 'var(--color-text)', border: 'none', cursor: 'pointer' }}
+                      onClick={() => goToPost(posts[activeIdx >= posts.length - 1 ? 0 : activeIdx + 1].slug)}
+                      aria-label={JEAN_COPY.nextPost}
+                    >
+                      &#8594;
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-            <div className={'flex flex-col p-6 overflow-y-auto ' + (activePost.imageUrl ? 'md:w-2/5' : 'w-full')} style={{ maxHeight: '88vh' }}>
-              <a
-                href="#/"
-                className="inline-flex items-center gap-1 text-xs font-medium mb-3 self-start"
-                style={{ color: 'var(--color-muted)', textDecoration: 'none' }}
+              <button
+                type="button"
+                className="absolute top-3 right-3 flex items-center justify-center rounded-full"
+                style={{ width: 36, height: 36, background: 'rgba(0,0,0,0.45)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '1.2rem', lineHeight: 1 }}
+                onClick={closeDetail}
+                aria-label={JEAN_COPY.close}
               >
+                &#215;
+              </button>
+            </div>
+          ) : (
+            <div
+              className="relative flex flex-col items-center justify-center gap-4 rounded-2xl p-10 text-center"
+              style={{ background: 'var(--color-surface, #ffffff)', maxWidth: 420 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+                {detailStatus === 'notfound' ? JEAN_COPY.notFound : detailStatus === 'error' ? JEAN_COPY.error : JEAN_COPY.loadingPost}
+              </p>
+              <a href="#/" className="text-sm font-medium" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>
                 &#8592; {JEAN_COPY.back}
               </a>
-              {activePost.publishedAt && (
-                <span className="text-xs mb-2" style={{ color: 'var(--color-muted)' }}>{formatBlogDate(activePost.publishedAt)}</span>
-              )}
-              {activePost.title && (
-                <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>{activePost.title}</h3>
-              )}
-              <p className="text-sm flex-1" style={{ color: 'var(--color-text)', whiteSpace: 'pre-wrap', lineHeight: 1.65 }}>{activePost.body}</p>
-              {Array.isArray(activePost.hashtags) && activePost.hashtags.length > 0 && (
-                <div className="text-xs font-medium mt-4" style={{ color: 'var(--color-primary)', lineHeight: 1.6 }}>
-                  {activePost.hashtags.map((h) => '#' + h).join(' ')}
-                </div>
-              )}
-              {activePost.disclosure && (
-                <p className="text-xs mt-4 pt-3 border-t" style={{ color: 'var(--color-muted)', borderColor: 'var(--color-line)' }}>{activePost.disclosure}</p>
-              )}
-              {canNavigate && (
-                <div className="flex items-center justify-between mt-5 pt-4 border-t" style={{ borderColor: 'var(--color-line)' }}>
-                  <button
-                    type="button"
-                    className="text-xl px-3 py-1 rounded-full"
-                    style={{ background: 'var(--color-surface-2, rgba(0,0,0,0.05))', color: 'var(--color-text)', border: 'none', cursor: 'pointer' }}
-                    onClick={() => goToPost(posts[activeIdx <= 0 ? posts.length - 1 : activeIdx - 1].slug)}
-                    aria-label={JEAN_COPY.prevPost}
-                  >
-                    &#8592;
-                  </button>
-                  <span className="text-xs" style={{ color: 'var(--color-muted)' }}>{activeIdx + 1} / {posts.length}</span>
-                  <button
-                    type="button"
-                    className="text-xl px-3 py-1 rounded-full"
-                    style={{ background: 'var(--color-surface-2, rgba(0,0,0,0.05))', color: 'var(--color-text)', border: 'none', cursor: 'pointer' }}
-                    onClick={() => goToPost(posts[activeIdx >= posts.length - 1 ? 0 : activeIdx + 1].slug)}
-                    aria-label={JEAN_COPY.nextPost}
-                  >
-                    &#8594;
-                  </button>
-                </div>
-              )}
             </div>
+          )}
+        </div>
+        {imageZoomed && activePost && activePost.imageUrl && (
+          <div
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4"
+            style={{ backgroundColor: 'rgba(0,0,0,0.96)', cursor: 'zoom-out' }}
+            onClick={() => setImageZoomed(false)}
+          >
+            <img
+              src={activePost.imageUrl}
+              alt={activePost.title || ''}
+              className="max-w-[96vw] max-h-[96vh] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
             <button
               type="button"
-              className="absolute top-3 right-3 flex items-center justify-center rounded-full"
-              style={{ width: 36, height: 36, background: 'rgba(0,0,0,0.45)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '1.2rem', lineHeight: 1 }}
-              onClick={closeDetail}
+              className="absolute top-4 right-4 flex items-center justify-center rounded-full"
+              style={{ width: 40, height: 40, background: 'rgba(255,255,255,0.18)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '1.4rem', lineHeight: 1 }}
+              onClick={() => setImageZoomed(false)}
               aria-label={JEAN_COPY.close}
             >
               &#215;
             </button>
           </div>
-        ) : (
-          <div
-            className="relative flex flex-col items-center justify-center gap-4 rounded-2xl p-10 text-center"
-            style={{ background: 'var(--color-surface, #ffffff)', maxWidth: 420 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
-              {detailStatus === 'notfound' ? JEAN_COPY.notFound : detailStatus === 'error' ? JEAN_COPY.error : JEAN_COPY.loadingPost}
-            </p>
-            <a href="#/" className="text-sm font-medium" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>
-              &#8592; {JEAN_COPY.back}
-            </a>
-          </div>
         )}
-      </div>
+      </>,
+      document.body
     )}
     </div>
   );
