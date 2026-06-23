@@ -60,7 +60,7 @@ export function SectionContact_SectionContactFormContact() {
 
   return (
     <div className="jean-motion-layer" data-jean-reveal="true" id="section_contact_form_contact" data-section-id="section_contact_form_contact" data-section-type="contact">
-    <section id="contact" className="py-20 lg:py-28 jean-section-shell" style={{ backgroundColor: 'var(--color-surface-tint)' }}>
+    <section id="contact" className="py-20 lg:py-28 jean-section-shell" style={{ backgroundColor: 'var(--color-bg-alt)' }}>
       <div className="jean-rhythm-tight mx-auto px-6">
         <h2 className="text-3xl lg:text-4xl font-bold text-center mb-5" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>Kontakt</h2>
         <div className="max-w-3xl mx-auto text-center mb-12 flex flex-col gap-4"><div dangerouslySetInnerHTML={{ __html: "<p data-block-id=\"block_contact_intro\" data-block-type=\"text.paragraph\" style=\"color:var(--color-text);line-height:1.6;font-weight:400\">Pokud chceš spolupracovat na návrhu témat, poslat tip na trasu, nebo jen napsat svůj vlastní „zápis“, který se chce vydat, ozvi se. Píšu s klidem, ale odpovídám konkrétně.</p>" }} /></div>

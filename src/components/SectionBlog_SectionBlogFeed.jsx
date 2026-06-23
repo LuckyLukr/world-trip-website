@@ -36,8 +36,9 @@ function jeanSamplePlaceholder(from, to) {
   return 'data:image/svg+xml,' + encodeURIComponent(svg);
 }
 
-// Representative posts shown only in the editor preview (JEAN_PREVIEW). A deployed
-// site never shows these — it renders live posts (or the real empty state).
+// Fallback posts shown only in the editor preview (JEAN_PREVIEW) when no live posts
+// exist yet. A deployed site never shows these — it renders live posts (or the real
+// empty state).
 const JEAN_SAMPLE_POSTS = [
   {
     id: 'sample-1', slug: 'ukazkovy-prispevek-1', title: 'Ukázkový příspěvek',
@@ -104,21 +105,27 @@ export function SectionBlog_SectionBlogFeed() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  // Load the feed (latest posts) once. In the editor preview the runtime fetch is
-  // sandbox-blocked, so show sample posts instead.
+  // Load the feed (latest posts) once. The editor preview fetches the same live
+  // data as the deployed site (the public blog endpoint sends permissive CORS, so
+  // the sandboxed preview iframe can read it). Only if that returns nothing — or
+  // fails — does the preview fall back to sample posts, so the section stays
+  // visible/editable on a brand-new site. Deployed sites never show samples.
   useEffect(() => {
-    if (JEAN_PREVIEW) { setPosts(JEAN_SAMPLE_POSTS); setStatus('ready'); return undefined; }
     let cancelled = false;
     (async () => {
       try {
         const res = await fetch(JEAN_API_URL + '/v1/public/blog/' + encodeURIComponent(JEAN_SITE_ID) + '/posts');
-        if (!res.ok) { if (!cancelled) setStatus('error'); return; }
+        if (!res.ok) throw new Error('http ' + res.status);
         const d = await res.json().catch(() => ({}));
         if (cancelled) return;
-        setPosts(Array.isArray(d.posts) ? d.posts : []);
+        const list = Array.isArray(d.posts) ? d.posts : [];
+        if (list.length === 0 && JEAN_PREVIEW) { setPosts(JEAN_SAMPLE_POSTS); setStatus('ready'); return; }
+        setPosts(list);
         setStatus('ready');
       } catch {
-        if (!cancelled) setStatus('error');
+        if (cancelled) return;
+        if (JEAN_PREVIEW) { setPosts(JEAN_SAMPLE_POSTS); setStatus('ready'); return; }
+        setStatus('error');
       }
     })();
     return () => { cancelled = true; };
@@ -127,7 +134,7 @@ export function SectionBlog_SectionBlogFeed() {
   // Deep link to a post that isn't in the loaded feed → fetch it by slug. Wait
   // for the feed to settle first so in-feed posts skip the extra request.
   useEffect(() => {
-    if (JEAN_PREVIEW || !activeSlug || activeIdx >= 0 || status === 'loading') {
+    if (!activeSlug || activeIdx >= 0 || status === 'loading') {
       setDetailStatus('idle');
       setFetchedPost(null);
       return undefined;
@@ -181,10 +188,10 @@ export function SectionBlog_SectionBlogFeed() {
 
   return (
     <div className="jean-motion-layer" data-jean-reveal="true" id="section_blog_feed" data-section-id="section_blog_feed" data-section-type="blog">
-    <section className="py-20 lg:py-28 jean-section-shell " style={{ backgroundColor: 'var(--color-bg)' }}>
+    <section className="py-20 lg:py-28 jean-section-shell " style={{ backgroundColor: '#f8fafc', borderStyle: 'solid', borderColor: '#e2e8f0', borderWidth: '1px', borderRadius: '0.75rem' }}>
       <div className="max-w-5xl mx-auto px-6">
         <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-center" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-heading)' }}>Deníkové zápisy</h2>
-        <div className="mb-10 flex flex-col gap-3 text-center max-w-2xl mx-auto"><div dangerouslySetInnerHTML={{ __html: "<p data-block-id=\"block_blog_intro\" data-block-type=\"text.paragraph\" style=\"color:var(--color-text);line-height:1.6;font-weight:400\">Tady se objevují nové zápisy Kláry z Valtic. Vždycky platí: draft vzniká s pomocí AI, ale před publikací prochází lidským schválením — aby tón zůstal stejný.</p>" }} /></div>
+        <div className="mb-10 flex flex-col gap-3 text-center max-w-2xl mx-auto"><div dangerouslySetInnerHTML={{ __html: "<p data-block-id=\"block_blog_intro\" data-block-type=\"text.paragraph\" style=\"color:var(--color-text);line-height:1.6;font-weight:300\">Tady se objevují nové zápisy Kláry z Valtic. Vždycky platí: draft vzniká s pomocí AI, ale před publikací prochází lidským schválením — aby tón zůstal stejný.</p>" }} /></div>
         {status === 'loading' && (
           <p className="text-center text-sm" style={{ color: 'var(--color-muted)' }}>{JEAN_COPY.loading}</p>
         )}

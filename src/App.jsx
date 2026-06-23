@@ -4,7 +4,6 @@ import { SectionHero_SectionHeroSplit } from './components/SectionHero_SectionHe
 import { SectionContentGroup_SectionContentGroupAboutProjectStory } from './components/SectionContentGroup_SectionContentGroupAboutProjectStory';
 import { SectionLocation_SectionTravelContactLocationMap } from './components/SectionLocation_SectionTravelContactLocationMap';
 import { SectionBlog_SectionBlogFeed } from './components/SectionBlog_SectionBlogFeed';
-import { SectionCtaBanner_SectionCtaBannerContactClara } from './components/SectionCtaBanner_SectionCtaBannerContactClara';
 import { SectionContact_SectionContactFormContact } from './components/SectionContact_SectionContactFormContact';
 import { SectionFooter_SectionFooterSimple } from './components/SectionFooter_SectionFooterSimple';
 
@@ -81,7 +80,6 @@ export default function App() {
       <SectionContentGroup_SectionContentGroupAboutProjectStory />
       <SectionLocation_SectionTravelContactLocationMap />
       <SectionBlog_SectionBlogFeed />
-      <SectionCtaBanner_SectionCtaBannerContactClara />
       <SectionContact_SectionContactFormContact />
       <SectionFooter_SectionFooterSimple />
       </div>
