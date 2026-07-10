@@ -90,7 +90,7 @@ export function SectionContact_SectionContactFormContact() {
                 <textarea value={_msg} onChange={(e) => setMsg(e.target.value)} placeholder={JEAN_COPY.placeholderMessage} rows={4} required className="w-full px-4 py-2.5 rounded-xl border text-sm outline-none resize-none" style={{ borderColor: 'var(--color-line)', background: 'var(--color-bg)', color: 'var(--color-text)' }} />
               </div>
               {errMsg && <p className="text-sm" role="alert" style={{ color: '#EF4444' }}>{errMsg}</p>}
-              <button type="submit" disabled={status === 'submitting'} className="w-full py-3 rounded-xl font-semibold text-white disabled:opacity-60 transition-opacity" style={{ backgroundColor: 'var(--color-primary)' }}>
+              <button type="submit" disabled={status === 'submitting'} className="w-full py-3 font-semibold disabled:opacity-60 transition-opacity" style={{ borderRadius: '9999px', color: '#fff', backgroundColor: 'var(--color-primary)', border: 'none', cursor: 'pointer' }}>
                 {status === 'submitting' ? JEAN_COPY.submitSending : JEAN_COPY.submitIdle}
               </button>
             </form>

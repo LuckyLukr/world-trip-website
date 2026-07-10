@@ -125,15 +125,22 @@ body {
   --jean-scroll-progress: 0;
 }
 
+/* Scroll-reveal + parallax are opt-in: only active when the site shell carries
+   data-jean-motion="on" (set from the design's decorationDensity = expressive).
+   With motion off, .jean-motion-layer is inert and content is simply visible —
+   a clean, static baseline instead of every section fading/parallaxing in. */
 .jean-motion-layer {
   --jean-parallax-offset: 0px;
+}
+
+[data-jean-motion='on'] .jean-motion-layer {
   opacity: 0;
   transform: translate3d(0, calc(28px + var(--jean-parallax-offset)), 0) scale(0.985);
   transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform, opacity;
 }
 
-.jean-motion-layer.is-visible {
+[data-jean-motion='on'] .jean-motion-layer.is-visible {
   opacity: 1;
   transform: translate3d(0, var(--jean-parallax-offset), 0) scale(1);
 }
@@ -203,18 +210,6 @@ body {
 }
 
 @media (min-width: 1024px) {
-  .jean-hero-stage {
-    min-height: 150vh;
-  }
-
-  .jean-hero-shell {
-    position: sticky;
-    top: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-
   .jean-panel-layout {
     display: grid;
     grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
@@ -222,12 +217,15 @@ body {
     align-items: start;
   }
 
-  .jean-gallery-columns {
+  /* The 2-column masonry gallery (with an oversized featured first image) is
+     opt-in for expressive designs. The default gallery keeps its own Tailwind
+     column classes (a clean, uniform 3-column grid). */
+  [data-jean-motion='on'] .jean-gallery-columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
   }
 
-  .jean-gallery-columns .jean-gallery-card--featured {
+  [data-jean-motion='on'] .jean-gallery-columns .jean-gallery-card--featured {
     grid-row: span 2;
   }
 
@@ -237,7 +235,9 @@ body {
     margin-right: auto;
   }
 
-  .jean-panel-sticky {
+  /* Sticky panels are opt-in; the default is normal document flow (no full-height
+     sticky hero stage that overrides the whole layout). */
+  [data-jean-motion='on'] .jean-panel-sticky {
     position: sticky;
     top: clamp(5rem, 10vh, 7.5rem);
   }
@@ -248,7 +248,9 @@ body {
     scroll-behavior: auto;
   }
 
-  .jean-motion-layer {
+  /* Scoped to match the gated hidden rule's specificity so reduced-motion always
+     reveals content even when motion is on. */
+  [data-jean-motion='on'] .jean-motion-layer {
     opacity: 1;
     transform: none;
     transition: none;
@@ -258,16 +260,6 @@ body {
   .jean-parallax-down,
   .jean-parallax-subtle {
     --jean-parallax-offset: 0px;
-  }
-
-  .jean-hero-stage {
-    min-height: auto;
-  }
-
-  .jean-hero-shell,
-  .jean-panel-sticky {
-    position: static;
-    min-height: auto;
   }
 
   .jean-pullquote-card::before {

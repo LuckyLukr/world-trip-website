@@ -7,8 +7,11 @@ import { SectionBlog_SectionBlogFeed } from './components/SectionBlog_SectionBlo
 import { SectionContact_SectionContactFormContact } from './components/SectionContact_SectionContactFormContact';
 import { SectionFooter_SectionFooterSimple } from './components/SectionFooter_SectionFooterSimple';
 
+const JEAN_MOTION_ENABLED = false;
+
 function useJeanScrollEffects() {
   useEffect(() => {
+    if (!JEAN_MOTION_ENABLED) return undefined;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const revealNodes = Array.from(document.querySelectorAll('[data-jean-reveal]'));
     const parallaxRoots = Array.from(document.querySelectorAll('[data-jean-parallax-root]'));
@@ -74,7 +77,7 @@ export default function App() {
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-      <div className="jean-site-shell" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <div className="jean-site-shell" data-jean-motion="off" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <SectionHeader_SectionHeaderStickyBlend />
       <SectionHero_SectionHeroSplit />
       <SectionContentGroup_SectionContentGroupAboutProjectStory />
