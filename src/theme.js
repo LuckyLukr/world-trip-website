@@ -13,6 +13,12 @@ export const theme = {
     "surface": "#FFFDF8"
   },
   "spacing": "comfortable",
+  "brandLogo": {
+    "imageId": "d9299336-3cd5-485f-8db8-4ec88bcf8c14",
+    "showName": true,
+    "showInHero": true,
+    "src": "/images/logo-1.png"
+  },
   "borderRadius": "xl",
   "cardBehavior": "floating",
   "layoutEnergy": "editorial",

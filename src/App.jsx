@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { SectionHeader_SectionHeaderStickyBlend } from './components/SectionHeader_SectionHeaderStickyBlend';
 import { SectionHero_SectionHeroSplit } from './components/SectionHero_SectionHeroSplit';
 import { SectionContentGroup_SectionContentGroupAboutProjectStory } from './components/SectionContentGroup_SectionContentGroupAboutProjectStory';
-import { SectionLocation_SectionTravelContactLocationMap } from './components/SectionLocation_SectionTravelContactLocationMap';
 import { SectionBlog_SectionBlogFeed } from './components/SectionBlog_SectionBlogFeed';
 import { SectionContact_SectionContactFormContact } from './components/SectionContact_SectionContactFormContact';
 import { SectionFooter_SectionFooterSimple } from './components/SectionFooter_SectionFooterSimple';
@@ -81,7 +80,6 @@ export default function App() {
       <SectionHeader_SectionHeaderStickyBlend />
       <SectionHero_SectionHeroSplit />
       <SectionContentGroup_SectionContentGroupAboutProjectStory />
-      <SectionLocation_SectionTravelContactLocationMap />
       <SectionBlog_SectionBlogFeed />
       <SectionContact_SectionContactFormContact />
       <SectionFooter_SectionFooterSimple />
