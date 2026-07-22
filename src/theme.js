@@ -5,12 +5,12 @@ export const theme = {
     "heading": "Playfair Display"
   },
   "palette": {
-    "bg": "#FBF8F1",
-    "text": "#1B2327",
-    "muted": "#516065",
-    "accent": "#4B86C7",
-    "primary": "#2F5D5A",
-    "surface": "#FFFDF8"
+    "bg": "#FFFFFF",
+    "text": "#0F172A",
+    "muted": "#64748B",
+    "accent": "#06B6D4",
+    "primary": "#4F46E5",
+    "surface": "#F8FAFC"
   },
   "spacing": "comfortable",
   "brandLogo": {
@@ -21,6 +21,7 @@ export const theme = {
   },
   "borderRadius": "xl",
   "cardBehavior": "floating",
+  "headerLayout": "minimal_overlay",
   "layoutEnergy": "editorial",
   "surfaceStyle": "solid",
   "heroComposition": "asymmetrical",
